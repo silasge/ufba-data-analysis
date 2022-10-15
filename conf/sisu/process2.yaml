@@ -1,0 +1,488 @@
+cond_rename_columns:
+  cols_all_years:
+    Q001: educ_pai
+    Q002: educ_mae
+    NU_ANO: ano_enem
+    NO_CURSO: nome_curso
+    ST_LEI_OPTANTE: cotas_publica
+    ST_LEI_RENDA: cotas_renda
+    ST_LEI_ETNIA_P: cotas_etnia
+  cols_2015:
+    ID_DEPENDENCIA_ADM_ESC: TP_DEPENDENCIA_ADM_ESC
+    IN_TP_ENSINO: TP_ENSINO
+    IDADE: NU_IDADE
+    NACIONALIDADE: TP_NACIONALIDADE
+    ST_CONCLUSAO: TP_ST_CONCLUSAO
+    ANO_CONCLUIU: TP_ANO_CONCLUIU
+    Q004: tam_fam
+    Q003: renda_fam_pc
+    Q007: tv_cores
+    Q008: dvd
+    Q010: computador
+    Q011: carro
+    Q012: maq_lavar
+    Q013: geladeira
+    Q014: freezer
+    Q015: tel_fixo
+    Q016: celular
+    Q017: internet
+    Q018: tv_assinatura
+    Q019: aspirador_po
+    Q020: empregada
+    Q021: banheiro
+    Q035: tipo_escola_ensino_medio
+  cols_not_2015:
+    Q005: tam_fam
+    Q006: renda_fam_pc
+    Q019: tv_cores
+    Q020: dvd
+    Q024: computador
+    Q010: carro
+    Q014: maq_lavar
+    Q012: geladeira
+    Q013: freezer
+    Q023: tel_fixo
+    Q022: celular
+    Q025: internet
+    Q021: tv_assinatura
+    Q018: aspirador_po
+    Q007: empregada
+    Q008: banheiro
+  cols_only_2018:
+    Q027: tipo_escola_ensino_medio
+  cols_only_neither:
+    Q047: tipo_escola_ensino_medio
+filter_rows:
+  ds_formacao:
+    filter: True
+    contains: tecnologico
+    regex: False
+    negate: True
+  no_campus:
+    filter: True
+    contains: campus anisio teixeira|campus vitoria da conquista
+    regex: True
+    negate: True
+  nome_curso:
+    filter: True
+    contains: ^interdisciplinar
+    regex: True
+    negate: True
+create_columns:
+  nota_media_enem:
+    - nota_lc
+    - nota_ch
+    - nota_cn
+    - nota_mt
+    - nota_redacao
+  cotista:
+    - cotas_publica
+    - cotas_renda
+    - cotas_etnia
+  necessidade_especial:
+    - in_baixa_visao
+    - in_cegueira
+    - in_surdez
+    - in_deficiencia_auditiva
+    - in_surdo_cegueira
+    - in_deficiencia_fisica
+    - in_deficiencia_mental
+    - in_deficit_atencao
+    - in_dislexia
+    - in_autismo
+transform_columns:
+  st_aprovado:
+    type: "normal"
+    mapper:
+      sim: 1
+      nao: 0
+  tp_st_conclusao:
+    type: "normal"
+    mapper:
+      1: concluido
+      2: concluido ano enem
+      3: nao concluido
+      4: nao concluido
+  tp_escola:
+    type: "year_dependent"
+    mapper:
+      2014:
+        1: publica
+        2: privada
+      else:
+        1: nao respondeu
+        2: publica
+        3: privada
+        4: exterior
+  tp_ensino:
+    type: "year_dependent"
+    mapper:
+      2014:
+        1: regular
+        2: eja
+        3: ensino especial
+      else:
+        1: regular
+        2: ensino especial
+        3: eja
+  tp_estado_civil:
+    type: "normal"
+    mapper:
+      0: solteiro(a)
+      1: casado(a)/mora com companheiro(a)
+      2: divorciado(a)/desquitado(a)/separado(a)
+      3: viuvo(a)
+  tp_cor_raca:
+    type: "normal"
+    mapper:
+      1: branca
+      2: preta
+      3: parda
+      4: amarela
+      5: indigena
+  educ_pai:
+    type: "year_dependent"
+    mapper:
+      2004:
+        A: 1
+        B: 2
+        C: 2
+        D: 3
+        E: 3
+        F: 3
+        G: 4
+        H: 5
+      else:
+        A: 1
+        B: 2
+        C: 2
+        D: 2
+        E: 3
+        F: 4
+        G: 5
+  educ_mae:
+    type: "year_dependent"
+    mapper:
+      2004:
+        A: 1
+        B: 2
+        C: 2
+        D: 3
+        E: 3
+        F: 3
+        G: 4
+        H: 5
+      else:
+        A: 1
+        B: 2
+        C: 2
+        D: 2
+        E: 3
+        F: 4
+        G: 5
+  renda_fam_pc:
+    type: "normal"
+    mapper:
+        A: 1
+        B: 1
+        C: 1
+        D: 1
+        E: 2
+        F: 2
+        G: 2
+        H: 3
+        I: 3 
+        J: 4
+        K: 4
+        L: 4
+        M: 4
+        N: 4
+        O: 4
+        P: 4
+        Q: 4
+  tv_cores:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 3
+        C: 4
+        D: 1
+      else:
+        A: 1
+        B: 2
+        C: 3
+        D: 4
+        E: 4
+  computador:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 3
+        C: 4
+        D: 1
+      else:
+        A: 1
+        B: 2
+        C: 3
+        D: 4
+        E: 4
+  carro:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 3
+        C: 4
+        D: 1
+      else:
+        A: 1
+        B: 2
+        C: 3
+        D: 4
+        E: 4
+  maq_lavar:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 3
+        C: 4
+        D: 1
+      else:
+        A: 1
+        B: 2
+        C: 3
+        D: 4
+        E: 4
+  geladeira:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 3
+        C: 4
+        D: 1
+      else:
+        A: 1
+        B: 2
+        C: 3
+        D: 4
+        E: 4 
+  freezer:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 3
+        C: 4
+        D: 1
+      else:
+        A: 1
+        B: 2
+        C: 3
+        D: 4
+        E: 4
+  celular:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 3
+        C: 4
+        D: 1
+      else:
+        A: 1
+        B: 2
+        C: 3
+        D: 4
+        E: 4 
+  banheiro:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 3
+        C: 4
+        D: 1
+      else:
+        A: 1
+        B: 2
+        C: 3
+        D: 4
+        E: 4 
+  dvd:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 2
+        C: 2
+        D: 1
+      else:
+        A: 1
+        B: 2
+  tel_fixo:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 2
+        C: 2
+        D: 1
+      else:
+        A: 1
+        B: 2
+  internet:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 2
+        C: 2
+        D: 1
+      else:
+        A: 1
+        B: 2
+  tv_assinatura:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 2
+        C: 2
+        D: 1
+      else:
+        A: 1
+        B: 2
+  aspirador_po:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 2
+        C: 2
+        D: 1
+      else:
+        A: 1
+        B: 2
+  empregada:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: 2
+        B: 2
+        C: 2
+        D: 1
+      else:
+        A: 1
+        B: 2
+        C: 2
+        D: 2
+  tipo_escola_ensino_medio:
+    type: "year_dependent"
+    mapper:
+      2014:
+        A: publica
+        B: publica/privada
+        C: privada
+        D: publica/privada
+        E: publica
+        F: publica
+        G: publica
+        H: publica
+      else:
+        A: publica
+        B: publica/privada
+        C: publica/privada
+        D: privada
+        E: privada
+  nome_curso: 
+    type: "regex"
+    mapper:
+      estudo de genero e diversidade: genero e diversidade
+      comunicacao social: comunicacao
+      engenharia da computacao: engenharia de computacao
+      letras|lingua: letras
+select_columns:
+  - ano_enem
+  - ano_sisu
+  - per_ingr
+  - no_campus
+  - nome_curso
+  - ds_turno
+  - ds_formacao
+  - qt_vagas
+  - cpf
+  - dt_nascimento
+  - tp_sexo
+  - no_bairro
+  - nota_lc
+  - nota_ch
+  - nota_cn
+  - nota_mt
+  - nota_redacao
+  - nota_inscrito
+  - notacorte_concorrida
+  - st_aprovado
+  - cotas_publica
+  - cotas_renda
+  - cotas_etnia
+  - co_escola
+  - tp_dependencia_adm_esc
+  - nu_idade
+  - tp_nacionalidade
+  - co_municipio_residencia
+  - no_municipio_residencia
+  - co_uf_residencia
+  - sg_uf_residencia
+  - co_municipio_nascimento
+  - no_municipio_nascimento
+  - co_uf_nascimento
+  - sg_uf_nascimento
+  - tp_st_conclusao
+  - tp_ano_concluiu
+  - tp_escola
+  - tp_ensino
+  - tp_estado_civil
+  - tp_cor_raca
+  - in_baixa_visao
+  - in_cegueira
+  - in_surdez
+  - in_deficiencia_auditiva
+  - in_surdo_cegueira
+  - in_deficiencia_fisica
+  - in_deficiencia_mental
+  - in_deficit_atencao
+  - in_dislexia
+  - in_autismo
+  - co_municipio_prova
+  - no_municipio_prova
+  - co_uf_prova
+  - sg_uf_prova
+  - nota_comp1
+  - nota_comp2
+  - nota_comp3
+  - nota_comp4
+  - nota_comp5
+  - educ_pai
+  - educ_mae
+  - tam_fam
+  - renda_fam_pc
+  - tv_cores
+  - dvd
+  - computador
+  - carro
+  - maq_lavar
+  - geladeira
+  - freezer
+  - tel_fixo
+  - celular
+  - internet
+  - tv_assinatura
+  - aspirador_po
+  - empregada
+  - banheiro
+  - tipo_escola_ensino_medio
+  

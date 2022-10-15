@@ -1,0 +1,30 @@
+stages:
+  process_sisu:
+    foreach: 
+      - in: ./data/raw/sisu/enem_inscritos_20151.zip
+        out: ./data/interim/sisu/enem_inscritos_20151_interim.parquet
+      - in: ./data/raw/sisu/enem_inscritos_20152.zip
+        out: ./data/interim/sisu/enem_inscritos_20152_interim.parquet
+      - in: ./data/raw/sisu/enem_inscritos_20161.zip
+        out: ./data/interim/sisu/enem_inscritos_20161_interim.parquet
+      - in: ./data/raw/sisu/enem_inscritos_20162.zip
+        out: ./data/interim/sisu/enem_inscritos_20162_interim.parquet
+      - in: ./data/raw/sisu/enem_inscritos_20171.zip
+        out: ./data/interim/sisu/enem_inscritos_20171_interim.parquet
+      - in: ./data/raw/sisu/enem_inscritos_20172.zip
+        out: ./data/interim/sisu/enem_inscritos_20172_interim.parquet
+      - in: ./data/raw/sisu/enem_inscritos_20181.zip
+        out: ./data/interim/sisu/enem_inscritos_20181_interim.parquet
+    do:
+      cmd: >-
+        poetry run python ufba_data_analysis/sisu.py 
+        -i ${item.in} 
+        -o ${item.out}
+        --cfg conf/sisu/process1.yaml
+      deps:
+        - ufba_data_analysis/sisu.py
+        - ${item.in}
+        - conf/sisu/process1.yaml
+      outs:
+        - ${item.out}
+      

@@ -1,0 +1,4 @@
+outs:
+- md5: 5c5dde8df717007f8096ad196d296132
+  size: 390120
+  path: municipios.csv

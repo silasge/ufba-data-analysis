@@ -1,6 +1,8 @@
 import argparse
+from glob import glob
 import re
 
+from loguru import logger
 import numpy as np
 import pandas as pd
 
@@ -9,6 +11,10 @@ from ufba_data_analysis.utils import (
     get_conf,
     get_transform_cols,
 )
+
+
+def get_sisu_raw_dir(sisu_raw_dir: str) -> list:
+    return glob(f"{sisu_raw_dir}/*.zip")
 
 
 def read_sisu_csv(sisu_raw_path: str) -> pd.DataFrame:
@@ -185,35 +191,41 @@ def select_sisu_columns(
     return transformed_sisu_df.loc[:, select_columns_conf]
 
 
-def export_sisu_cleaned_df(selected_sisu_df: pd.DataFrame, interim_path: str) -> None:
-    selected_sisu_df.to_parquet(interim_path, index=False)
-
-
 def get_sisu_data(
-    input_path: str,
-    output_path: str,
+    directory_path: str,
     cfg_path: str = "./conf/sisu/process1.yaml",
-) -> None:
+) -> pd.DataFrame:
     process_cfg = get_conf(cfg_path)
-    sisu_df = read_sisu_csv(sisu_raw_path=input_path)
-    renamed_sisu_df = rename_sisu_columns(sisu_df, process_cfg["cond_rename_columns"])
-    filtered_sisu_df = filter_sisu_columns(renamed_sisu_df, process_cfg["filter_rows"])
-    sisu_df_with_new_cols = create_sisu_columns(
-        filtered_sisu_df, process_cfg["create_columns"]
-    )
-    transformed_sisu_df = transform_sisu_columns(
-        sisu_df_with_new_cols, process_cfg["transform_columns"]
-    )
-    selected_sisu_df = select_sisu_columns(
-        transformed_sisu_df, process_cfg["select_columns"]
-    )
-    export_sisu_cleaned_df(selected_sisu_df, interim_path=output_path)
+    files = get_sisu_raw_dir(directory_path)
+    sisu_dfs = [None] * len(files)
+    for i, f in enumerate(files):
+        logger.info(f"Reading {f}...")
+        sisu_df = read_sisu_csv(sisu_raw_path=f)
+        renamed_sisu_df = rename_sisu_columns(
+            sisu_df, process_cfg["cond_rename_columns"]
+        )
+        filtered_sisu_df = filter_sisu_columns(
+            renamed_sisu_df, process_cfg["filter_rows"]
+        )
+        sisu_df_with_new_cols = create_sisu_columns(
+            filtered_sisu_df, process_cfg["create_columns"]
+        )
+        transformed_sisu_df = transform_sisu_columns(
+            sisu_df_with_new_cols, process_cfg["transform_columns"]
+        )
+        selected_sisu_df = select_sisu_columns(
+            transformed_sisu_df, process_cfg["select_columns"]
+        )
+        sisu_dfs[i] = selected_sisu_df
+        logger.info("Done!")
+    return pd.concat(sisu_dfs)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", type=str)
+    parser.add_argument("-d", type=str)
     parser.add_argument("-o", type=str)
     parser.add_argument("--cfg", type=str)
     args = parser.parse_args()
-    get_sisu_data(input_path=args.i, output_path=args.o, cfg_path=args.cfg)
+    sisu_df = get_sisu_data(directory_path=args.d, cfg_path=args.cfg)
+    sisu_df.to_parquet(args.o, index=False)

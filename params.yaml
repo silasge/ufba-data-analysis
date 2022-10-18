@@ -1,0 +1,21 @@
+factor_analysis:
+  max_iter: 50
+  nse_cols:
+    - educ_pai
+    - educ_mae
+    - renda_fam_pc
+    - tv_cores
+    - dvd
+    - computador
+    - carro
+    - maq_lavar
+    - geladeira
+    - freezer
+    - tel_fixo
+    - celular
+    - internet
+    - tv_assinatura
+    - aspirador_po
+    - empregada
+    - banheiro
+  n_factors: 1

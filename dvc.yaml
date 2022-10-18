@@ -1,30 +1,27 @@
 stages:
-  process_sisu:
-    foreach: 
-      - in: ./data/raw/sisu/enem_inscritos_20151.zip
-        out: ./data/interim/sisu/enem_inscritos_20151_interim.parquet
-      - in: ./data/raw/sisu/enem_inscritos_20152.zip
-        out: ./data/interim/sisu/enem_inscritos_20152_interim.parquet
-      - in: ./data/raw/sisu/enem_inscritos_20161.zip
-        out: ./data/interim/sisu/enem_inscritos_20161_interim.parquet
-      - in: ./data/raw/sisu/enem_inscritos_20162.zip
-        out: ./data/interim/sisu/enem_inscritos_20162_interim.parquet
-      - in: ./data/raw/sisu/enem_inscritos_20171.zip
-        out: ./data/interim/sisu/enem_inscritos_20171_interim.parquet
-      - in: ./data/raw/sisu/enem_inscritos_20172.zip
-        out: ./data/interim/sisu/enem_inscritos_20172_interim.parquet
-      - in: ./data/raw/sisu/enem_inscritos_20181.zip
-        out: ./data/interim/sisu/enem_inscritos_20181_interim.parquet
-    do:
-      cmd: >-
-        poetry run python ufba_data_analysis/sisu.py 
-        -i ${item.in} 
-        -o ${item.out}
-        --cfg conf/sisu/process1.yaml
-      deps:
-        - ufba_data_analysis/sisu.py
-        - ${item.in}
-        - conf/sisu/process1.yaml
-      outs:
-        - ${item.out}
-      
+  sisu:
+    cmd: >-
+      poetry run python ./ufba_data_analysis/sisu/sisu.py
+      -d ./data/raw/sisu
+      -o ./data/interim/sisu/sisu_ufba_enrolled.parquet
+      --cfg conf/sisu/process1.yaml
+    deps:
+      - ./ufba_data_analysis/sisu/sisu.py
+      - ./data/raw/sisu
+      - conf/sisu/process1.yaml
+    outs:
+      - ./data/interim/sisu/sisu_ufba_enrolled.parquet
+  fa:
+    cmd: >-
+      poetry run python ./ufba_data_analysis/sisu/fa.py
+      -i ./data/interim/sisu/sisu_ufba_enrolled.parquet
+      -o ./data/interim/sisu_with_nse/sisu_ufba_enrolled_with_nse.parquet
+    deps:
+      - ./ufba_data_analysis/sisu/fa.py
+      - ./data/interim/sisu/sisu_ufba_enrolled.parquet
+    params:
+      - factor_analysis.max_iter
+      - factor_analysis.nse_cols
+      - factor_analysis.n_factors
+    outs:
+      - ./data/interim/sisu_with_nse/sisu_ufba_enrolled_with_nse.parquet

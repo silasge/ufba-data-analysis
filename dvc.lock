@@ -1,121 +1,56 @@
 schema: '2.0'
 stages:
-  process_sisu@3:
-    cmd: poetry run python ufba_data_analysis/sisu.py  -i ./data/raw/sisu/enem_inscritos_20162.zip  -o
-      ./data/interim/sisu/enem_inscritos_20162_interim.parquet --cfg conf/sisu/process1.yaml
+  sisu:
+    cmd: poetry run python ./ufba_data_analysis/sisu/sisu.py -d ./data/raw/sisu -o
+      ./data/interim/sisu/sisu_ufba_enrolled.parquet --cfg conf/sisu/process1.yaml
     deps:
-    - path: ./data/raw/sisu/enem_inscritos_20162.zip
-      md5: f8eb73cf871151176333baa62a7d2e47
-      size: 13113903
+    - path: ./data/raw/sisu
+      md5: 52021b01bb9098abb4becaf89e465305.dir
+      size: 126994358
+      nfiles: 15
+    - path: ./ufba_data_analysis/sisu/sisu.py
+      md5: 988917bcb686c21d59cb60a402987f23
+      size: 7912
     - path: conf/sisu/process1.yaml
       md5: a23fdf701c88a4655f34cf2600617d04
       size: 7887
-    - path: ufba_data_analysis/sisu.py
-      md5: e75bb9bff47e4256d7c711f430d86afa
-      size: 7712
     outs:
-    - path: ./data/interim/sisu/enem_inscritos_20162_interim.parquet
-      md5: 46e898f91558ccacfd02eaa8e58c4043
-      size: 1704060
-  process_sisu@6:
-    cmd: poetry run python ufba_data_analysis/sisu.py  -i ./data/raw/sisu/enem_inscritos_20181.zip  -o
-      ./data/interim/sisu/enem_inscritos_20181_interim.parquet --cfg conf/sisu/process1.yaml
+    - path: ./data/interim/sisu/sisu_ufba_enrolled.parquet
+      md5: c66625d67056856bbb68edef46944b14
+      size: 13140179
+  fa:
+    cmd: poetry run python ./ufba_data_analysis/sisu/fa.py -i ./data/interim/sisu/sisu_ufba_enrolled.parquet
+      -o ./data/interim/sisu_with_nse/sisu_ufba_enrolled_with_nse.parquet
     deps:
-    - path: ./data/raw/sisu/enem_inscritos_20181.zip
-      md5: 057d31cdac99ac4e2b918384719e5f72
-      size: 14222125
-    - path: conf/sisu/process1.yaml
-      md5: a23fdf701c88a4655f34cf2600617d04
-      size: 7887
-    - path: ufba_data_analysis/sisu.py
-      md5: e75bb9bff47e4256d7c711f430d86afa
-      size: 7712
+    - path: ./data/interim/sisu/sisu_ufba_enrolled.parquet
+      md5: c66625d67056856bbb68edef46944b14
+      size: 13140179
+    - path: ./ufba_data_analysis/sisu/fa.py
+      md5: cbb7aaded7e01e43b1c80fd85ae2b484
+      size: 2139
+    params:
+      params.yaml:
+        factor_analysis.max_iter: 50
+        factor_analysis.n_factors: 1
+        factor_analysis.nse_cols:
+        - educ_pai
+        - educ_mae
+        - renda_fam_pc
+        - tv_cores
+        - dvd
+        - computador
+        - carro
+        - maq_lavar
+        - geladeira
+        - freezer
+        - tel_fixo
+        - celular
+        - internet
+        - tv_assinatura
+        - aspirador_po
+        - empregada
+        - banheiro
     outs:
-    - path: ./data/interim/sisu/enem_inscritos_20181_interim.parquet
-      md5: 979c9afe44287d47340d22cd52fa787b
-      size: 1662915
-  process_sisu@5:
-    cmd: poetry run python ufba_data_analysis/sisu.py  -i ./data/raw/sisu/enem_inscritos_20172.zip  -o
-      ./data/interim/sisu/enem_inscritos_20172_interim.parquet --cfg conf/sisu/process1.yaml
-    deps:
-    - path: ./data/raw/sisu/enem_inscritos_20172.zip
-      md5: 95bb4c4286ac402e8be55010a39d277c
-      size: 15002999
-    - path: conf/sisu/process1.yaml
-      md5: a23fdf701c88a4655f34cf2600617d04
-      size: 7887
-    - path: ufba_data_analysis/sisu.py
-      md5: e75bb9bff47e4256d7c711f430d86afa
-      size: 7712
-    outs:
-    - path: ./data/interim/sisu/enem_inscritos_20172_interim.parquet
-      md5: 3d1ccc369f0407a9d7820a1833decccd
-      size: 1883736
-  process_sisu@0:
-    cmd: poetry run python ufba_data_analysis/sisu.py  -i ./data/raw/sisu/enem_inscritos_20151.zip  -o
-      ./data/interim/sisu/enem_inscritos_20151_interim.parquet --cfg conf/sisu/process1.yaml
-    deps:
-    - path: ./data/raw/sisu/enem_inscritos_20151.zip
-      md5: 3010098a5df155bb4ebc3b6cc7dfcce2
-      size: 24665158
-    - path: conf/sisu/process1.yaml
-      md5: a23fdf701c88a4655f34cf2600617d04
-      size: 7887
-    - path: ufba_data_analysis/sisu.py
-      md5: e75bb9bff47e4256d7c711f430d86afa
-      size: 7712
-    outs:
-    - path: ./data/interim/sisu/enem_inscritos_20151_interim.parquet
-      md5: ae21b515b224398960b1b1ad3c0e1862
-      size: 2524497
-  process_sisu@1:
-    cmd: poetry run python ufba_data_analysis/sisu.py  -i ./data/raw/sisu/enem_inscritos_20152.zip  -o
-      ./data/interim/sisu/enem_inscritos_20152_interim.parquet --cfg conf/sisu/process1.yaml
-    deps:
-    - path: ./data/raw/sisu/enem_inscritos_20152.zip
-      md5: fe2fb2614065247bde868aeee1e0ba08
-      size: 16225494
-    - path: conf/sisu/process1.yaml
-      md5: a23fdf701c88a4655f34cf2600617d04
-      size: 7887
-    - path: ufba_data_analysis/sisu.py
-      md5: e75bb9bff47e4256d7c711f430d86afa
-      size: 7712
-    outs:
-    - path: ./data/interim/sisu/enem_inscritos_20152_interim.parquet
-      md5: 547d3a2da35cb96e377e7a0142d12c5b
-      size: 2138095
-  process_sisu@4:
-    cmd: poetry run python ufba_data_analysis/sisu.py  -i ./data/raw/sisu/enem_inscritos_20171.zip  -o
-      ./data/interim/sisu/enem_inscritos_20171_interim.parquet --cfg conf/sisu/process1.yaml
-    deps:
-    - path: ./data/raw/sisu/enem_inscritos_20171.zip
-      md5: cd8756bdf602f3bdf2aa681dce9f9f93
-      size: 19988144
-    - path: conf/sisu/process1.yaml
-      md5: a23fdf701c88a4655f34cf2600617d04
-      size: 7887
-    - path: ufba_data_analysis/sisu.py
-      md5: e75bb9bff47e4256d7c711f430d86afa
-      size: 7712
-    outs:
-    - path: ./data/interim/sisu/enem_inscritos_20171_interim.parquet
-      md5: 85f4b8e65066c018115f590b33fd01bd
-      size: 2007037
-  process_sisu@2:
-    cmd: poetry run python ufba_data_analysis/sisu.py  -i ./data/raw/sisu/enem_inscritos_20161.zip  -o
-      ./data/interim/sisu/enem_inscritos_20161_interim.parquet --cfg conf/sisu/process1.yaml
-    deps:
-    - path: ./data/raw/sisu/enem_inscritos_20161.zip
-      md5: c92e94800241d9f656963a312c843d3d
-      size: 23775646
-    - path: conf/sisu/process1.yaml
-      md5: a23fdf701c88a4655f34cf2600617d04
-      size: 7887
-    - path: ufba_data_analysis/sisu.py
-      md5: e75bb9bff47e4256d7c711f430d86afa
-      size: 7712
-    outs:
-    - path: ./data/interim/sisu/enem_inscritos_20161_interim.parquet
-      md5: 593c4294483fa8e1092ea7c279ef3603
-      size: 2347067
+    - path: ./data/interim/sisu_with_nse/sisu_ufba_enrolled_with_nse.parquet
+      md5: 199d52f67c544c4a7b6865712f48c5b5
+      size: 13024301
